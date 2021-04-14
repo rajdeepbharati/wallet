@@ -77,6 +77,18 @@ const Create = ({ initialWalkthroughStep }) => {
     HDWalletProvider
   ])
 
+  // useEffect(() => {
+  //   console.log('steeeep', walkthroughStep)
+  //   const params = new URLSearchParams(router.query)
+  //   const naddr = params.toString().split('=')[1]
+
+  //   console.log('naddr', naddr)
+  //   if (walkthroughStep === 1 && naddr === 'null') {
+  //     setReturningHome(true)
+  //     // router.
+  //   }
+  // })
+
   return (
     <>
       {!returningHome ? (

@@ -1,5 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Radio, RadioGroup, Stack, HStack, VStack } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
+import axios from 'axios'
+import PropTypes from 'prop-types'
+import { createHash } from 'crypto'
 import {
   Box,
   IconLedger,
@@ -22,11 +27,21 @@ import {
 import { useWalletProvider } from '../../../WalletProvider'
 import ExpandableBox from './ExpandableBox'
 
-export default () => {
+function ChooseWallet({ jsonData, accountAddresses }) {
   const { setWalletType } = useWalletProvider()
   // this could be cleaner, but we use this to more easily navigate to/from the warning card
   const [localWalletType, setLocalWalletType] = useState(null)
+  const [accountAddrs, setAccountAddrs] = useState(accountAddresses)
+  const [selectedAccountAddress, setSelectedAccountAddress] = useState(null)
+  const [value, setValue] = React.useState('1')
+
   const router = useRouter()
+
+  useEffect(() => {
+    // Update the document title using the browser API
+    // document.title = `Selected account is: ${value}`
+    router.replace(`${router.pathname}?address=${value}`)
+  })
 
   const onChoose = type => {
     if (
@@ -43,8 +58,24 @@ export default () => {
     }
   }
 
-  const [phishingBanner, setPhishingBanner] = useState(false)
+  const setSelectedAccount = val => {
+    setSelectedAccountAddress(val)
+    // router.push(`/miner/${val}`)
+  }
 
+  const [phishingBanner, setPhishingBanner] = useState(true)
+  const items = []
+
+  // <button
+  //   type='button'
+  //   key={String(k) + String(v)}
+  //   onClick={() => setSelectedAccount(v)}
+  // >
+  //   {v}
+  // </button>
+  accountAddresses.forEach(v => {
+    items.push(<Radio value={v}>{v}</Radio>)
+  })
   return (
     <>
       {localWalletType ? (
@@ -126,14 +157,6 @@ export default () => {
               alignContent='center'
               mb={4}
             >
-              <HeaderGlyph
-                alt='Source: https://www.nontemporary.com/post/190437968500'
-                text='Wallet'
-                imageUrl='/imgwallet.png'
-                color='black'
-                fill='#000'
-                imageOpacity='0.7'
-              />
               <Box
                 display='flex'
                 flexDirection='column'
@@ -141,122 +164,25 @@ export default () => {
                 alignSelf='center'
                 textAlign='left'
               >
-                <Header fontSize={5}>
-                  A lightweight web interface to send and receive Filecoin via
-                  your Ledger device
-                </Header>
+                <Header fontSize={5}>Filecoin Miner Marketplace</Header>
                 <Title mt={3} color='core.darkgray'>
-                  Your private and sensitive information never leave the
-                  browser, and are erased upon page refresh
+                  Authenticate your owner address and become a verified miner!
                 </Title>
-                <NetworkSwitcherGlyph />
+                <ul>
+                  <RadioGroup onChange={setValue} value={value}>
+                    <Stack direction='column'>{items}</Stack>
+                  </RadioGroup>
+                </ul>
                 <ImportWallet
                   onClick={() => onChoose(LEDGER)}
                   Icon={IconLedger}
-                  title='Login via Ledger Device'
+                  title='Claim account via Ledger Device'
                   tag='Most Secure'
                   display='flex'
                   justifyContent='space-between'
                   flexDirection='column'
                   my={4}
                 />
-              </Box>
-              <Box>
-                <ExpandableBox acronym='Ta' title='Test Accounts'>
-                  <CreateWallet
-                    onClick={() => onChoose(CREATE_MNEMONIC)}
-                    m={2}
-                  />
-                  <ImportWallet
-                    onClick={() => onChoose(IMPORT_MNEMONIC)}
-                    glyphAcronym='Sp'
-                    title='Import Seed Phrase'
-                    m={2}
-                  />
-                  <ImportWallet
-                    onClick={() => onChoose(IMPORT_SINGLE_KEY)}
-                    glyphAcronym='Pk'
-                    title='Import Private Key'
-                    m={2}
-                  />
-                </ExpandableBox>
-              </Box>
-            </Box>
-            <Box
-              position='relative'
-              display='flex'
-              maxWidth={13}
-              width={['100%', '100%', '50%']}
-              flexDirection='column'
-              alignItems='flex-start'
-              alignContent='center'
-              backgroundColor='#0a0a0a'
-              borderRadius={3}
-              border={1}
-              boxShadow={2}
-            >
-              <HeaderGlyph
-                alt='Source: https://www.nontemporary.com/post/190437968500'
-                text='Vault'
-                imageUrl='/imgvault.png'
-                color='core.white'
-                fill='#fff'
-                width='100%'
-                imageOpacity='0.9'
-              />
-
-              <Box
-                display='flex'
-                flexDirection='column'
-                alignSelf='center'
-                textAlign='left'
-                p={4}
-              >
-                <Title fontSize={5} color='core.white'>
-                  For Filecoin multisig holders
-                </Title>
-
-                <Box
-                  display='flex'
-                  flexDirection='column'
-                  p={3}
-                  my={3}
-                  minHeight={10}
-                  width='100%'
-                  maxWidth={13}
-                  alignItems='center'
-                  justifyContent='flex-start'
-                  borderRadius={2}
-                >
-                  <Box
-                    display='flex'
-                    flexDirection='column'
-                    alignItems='center'
-                    m={3}
-                  >
-                    <Text
-                      color='core.lightgray'
-                      textAlign='center'
-                      p={0}
-                      mt={0}
-                      maxWidth={11}
-                    >
-                      Use your Ledger device to manage a Filecoin multisig
-                      wallet.
-                    </Text>
-
-                    <ImportWallet
-                      onClick={() => router.push('/vault?network=f')}
-                      glyphAcronym='Ev'
-                      title='Enter the Vault'
-                      backgroundColor='background.screen'
-                      color='core.black'
-                      glyphColor='core.black'
-                      boxShadow={2}
-                      border={0}
-                    />
-                  </Box>
-                </Box>
               </Box>
             </Box>
           </Box>
@@ -265,3 +191,10 @@ export default () => {
     </>
   )
 }
+
+ChooseWallet.propTypes = {
+  jsonData: PropTypes.array,
+  accountAddresses: PropTypes.array
+}
+
+export default ChooseWallet

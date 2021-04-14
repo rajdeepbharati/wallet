@@ -1,11 +1,27 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
+import PropTypes from 'prop-types'
+// import { BrowserRouter as Router, Switch, Route } from 'next/link'
+// import Link from 'next/link'
 import ChooseWallet from './Choose'
 import ConfigureWallet from './Configure'
 import { Box, NodeConnectingGlyph } from '../Shared'
 import useWallet from '../../WalletProvider/useWallet'
 
-export default () => {
+// export async function getStaticProps() {
+//   const res = await fetch(
+//     'https://random-testing-fmm.s3.us-west-2.amazonaws.com/accountAddresses.json'
+//   )
+//   const jsonData = await res.json()
+//   console.log('GSPPonboarding', jsonData)
+//   return {
+//     props: {
+//       jsonData
+//     }
+//   }
+// }
+
+function Onboard({ jsonData, accountAddresses }) {
   const wallet = useWallet()
   const router = useRouter()
   const [nodeConnecting, setNodeConnecting] = useState(true)
@@ -35,9 +51,16 @@ export default () => {
           (wallet.type ? (
             <ConfigureWallet walletType={wallet.type} />
           ) : (
-            <ChooseWallet />
+            <ChooseWallet accountAddresses={accountAddresses} />
           ))}
       </Box>
     </>
   )
 }
+
+Onboard.propTypes = {
+  jsonData: PropTypes.array,
+  accountAddresses: PropTypes.array
+}
+
+export default Onboard

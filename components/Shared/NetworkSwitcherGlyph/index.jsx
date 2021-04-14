@@ -73,20 +73,20 @@ const NetworkSwitcherGlyph = ({ ...props }) => {
       {...props}
     >
       <NetworkSwitcherButton
-        active={networkFromRedux === TESTNET}
-        onClick={() => onNetworkSwitch(TESTNET)}
-        borderTopLeftRadius={2}
-        borderBottomLeftRadius={2}
-      >
-        Use t addresses
-      </NetworkSwitcherButton>
-      <NetworkSwitcherButton
         active={networkFromRedux === MAINNET}
         onClick={() => onNetworkSwitch(MAINNET)}
         borderTopRightRadius={2}
         borderBottomRightRadius={2}
       >
         Use f addresses
+      </NetworkSwitcherButton>
+      <NetworkSwitcherButton
+        active={networkFromRedux === TESTNET}
+        onClick={() => onNetworkSwitch(TESTNET)}
+        borderTopLeftRadius={2}
+        borderBottomLeftRadius={2}
+      >
+        Use t addresses
       </NetworkSwitcherButton>
     </Box>
   )

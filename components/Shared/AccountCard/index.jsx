@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react'
+// import { useRouter } from 'next/router'
 import { string, func, bool, oneOf } from 'prop-types'
 import { ADDRESS_PROPTYPE } from '../../../customPropTypes'
 import Box from '../Box'
@@ -12,6 +13,8 @@ import {
   IMPORT_MNEMONIC,
   IMPORT_SINGLE_KEY
 } from '../../../constants'
+
+// const router = useRouter()
 
 const AccountCard = forwardRef(
   (
@@ -67,7 +70,7 @@ const AccountCard = forwardRef(
           {walletType === LEDGER && (
             <Button
               variant='tertiary'
-              title={ledgerBusy ? 'Check Device' : 'Show on Device'}
+              title={ledgerBusy ? 'Accept on Device' : 'Show on Device'}
               onClick={onShowOnLedger}
               height='max-content'
               ml={2}
@@ -111,13 +114,18 @@ AccountCard.propTypes = {
   /**
    * When true, disable the show on ledger button
    */
-  ledgerBusy: bool
+  ledgerBusy: bool,
+  /**
+   * When true, set address as confirmed
+   */
+  addressConfirmed: bool
 }
 
 AccountCard.defaultProps = {
   color: 'white',
   onShowOnLedger: () => {},
-  ledgerBusy: false
+  ledgerBusy: false,
+  addressConfirmed: false
 }
 
 export default AccountCard
